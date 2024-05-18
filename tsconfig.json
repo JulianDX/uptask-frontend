@@ -19,6 +19,15 @@
       ],
       "@/views/*": [
         "views/*"
+      ],
+      "@/api/*": [
+        "api/*"
+      ],
+      "@/types/*": [
+        "types/*"
+      ],
+      "@/lib/*": [
+        "lib/*"
       ]
     },
     /* Bundler mode */
