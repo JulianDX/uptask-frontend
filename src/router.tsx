@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { AppLayout } from "@/layouts/AppLayout";
 import { DashboardView } from "@/views/DashboardView";
 import { NewProjectView } from "./views/projects/NewProjectView";
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Router() {
   return (

@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 import { Logo } from "@/components/Logo";
 import NavMenu from "@/components/NavMenu";
+import { ToastContainer } from "react-toastify";
 
 export const AppLayout = () => {
   return (
@@ -23,6 +24,7 @@ export const AppLayout = () => {
           Todos los derechos reservados. {new Date().getFullYear()}
         </p>
       </footer>
+      <ToastContainer draggable />
     </>
   );
 };

@@ -3,8 +3,13 @@ import { useForm } from "react-hook-form";
 import ProjectForm from "@/components/projects/ProjectForm";
 import { ProjectFormData } from "@/types/index";
 import { createProject } from "@/api/ProjectApi";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useMutation } from "@tanstack/react-query";
 
 export const NewProjectView = () => {
+  const navigate = useNavigate();
+
   const initalValues: ProjectFormData = {
     projectName: "",
     clientName: "",
@@ -16,10 +21,22 @@ export const NewProjectView = () => {
     formState: { errors },
   } = useForm({ defaultValues: initalValues });
 
-  const handleForm = (data: ProjectFormData) => {
-    createProject(data);
-  };
+  const { mutate } = useMutation({
+    mutationFn: createProject,
+    onError: (res) => {
+      toast.error(res.message, {
+        theme: "colored",
+      });
+    },
+    onSuccess: (res) => {
+      toast.success(res, {
+        theme: "colored",
+      });
+      navigate("/");
+    },
+  });
 
+  const handleForm = (data: ProjectFormData) => mutate(data);
   return (
     <>
       <div className="max-w-3xl mx-auto">
