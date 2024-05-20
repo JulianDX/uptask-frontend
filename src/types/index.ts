@@ -9,6 +9,8 @@ export const ProjectSchema = z.object({
   description: z.string(),
 });
 
+export const ProjectsSchema = z.array(ProjectSchema);
+
 export type Project = z.infer<typeof ProjectSchema>;
 export type ProjectFormData = Pick<
   Project,

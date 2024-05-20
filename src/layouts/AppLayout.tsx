@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 import { Logo } from "@/components/Logo";
 import NavMenu from "@/components/NavMenu";
 import { ToastContainer } from "react-toastify";
@@ -6,17 +6,19 @@ import { ToastContainer } from "react-toastify";
 export const AppLayout = () => {
   return (
     <>
-      <header className="bg-gray-800 py-1">
+      <header className="bg-gray-800 py-4">
         <div className="mx-auto max-w-screen-2xl flex flex-col lg:flex-row justify-between items-center">
           <div className="w-64">
-            <Logo />
+            <Link to={"/"}>
+              <Logo />
+            </Link>
           </div>
-          <div className="pr-10">
+          <div className="lg:pr-10">
             <NavMenu />
           </div>
         </div>
       </header>
-      <section className="mx-auto max-w-screen-2xl mt-10 p-5">
+      <section className="mx-auto max-w-6xl mt-10 p-5">
         <Outlet />
       </section>
       <footer className="py-5">
