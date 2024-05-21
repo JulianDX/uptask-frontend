@@ -1,25 +1,20 @@
 import { Link, useLocation, useParams } from "react-router-dom";
-import { useForm } from "react-hook-form";
-import ProjectForm from "@/components/projects/ProjectForm";
-import { ProjectFormData } from "@/types/index";
-import { editProject, getProjectById } from "@/api/ProjectApi";
+import { getProjectById, getTasks } from "@/api/ProjectApi";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import AddTaskModal from "@/components/tasks/AddTaskModal";
+import { TaskType } from "@/types/index";
+import { useEffect, useState } from "react";
+import { TaskCard } from "@/components/tasks/TaskCard";
 
 export const ProjectDetailView = () => {
   const navigate = useNavigate();
-
-  const queryClient = useQueryClient();
-
   const location = useLocation();
 
   const params = useParams();
   const projectId = params.projectId!;
 
-  const { data, isLoading, isError } = useQuery({
+  const { data, isError } = useQuery({
     queryKey: ["projectById", projectId],
     queryFn: () => getProjectById(projectId),
     retry: 1,
@@ -27,53 +22,62 @@ export const ProjectDetailView = () => {
 
   if (isError) navigate("/");
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm({
-    defaultValues: {
-      projectName: "",
-      clientName: "",
-      description: "",
-    },
+  const { isLoading: isLoadingTasks, data: dataTasks } = useQuery({
+    queryFn: () => getTasks(projectId),
+    queryKey: ["tasks"],
   });
+
+  const tasks = dataTasks!;
+
+  type taskGroups = {
+    [key: string]: TaskType[];
+  };
+
+  const initialStatusGroups: taskGroups = {
+    pending: [],
+    onHold: [],
+    inProgress: [],
+    underReview: [],
+    completed: [],
+  };
+
+  const [groupedTasks, setGroupedTasks] = useState(initialStatusGroups);
 
   useEffect(() => {
-    if (data) {
-      reset({
-        projectName: data.projectName,
-        clientName: data.clientName,
-        description: data.description,
-      });
+    if (tasks) {
+      const groupTasks = tasks.reduce((acc, task) => {
+        let currentGroup = acc[task.taskStatus]
+          ? [...acc[task.taskStatus]]
+          : [];
+        currentGroup = [...currentGroup, task];
+        return { ...acc, [task.taskStatus]: currentGroup };
+      }, initialStatusGroups);
+      setGroupedTasks(groupTasks);
     }
-  }, [data]);
+  }, [tasks]);
 
-  const { mutate } = useMutation({
-    mutationFn: editProject,
-    onError: (res) => {
-      toast.error(res.message, {
-        theme: "colored",
-      });
-    },
-    onSuccess: (res) => {
-      queryClient.invalidateQueries({ queryKey: ["projects"] });
-      queryClient.invalidateQueries({ queryKey: ["projectById", projectId] });
-      toast.success(res, {
-        theme: "colored",
-      });
-      navigate("/");
-    },
-  });
+  const statusTranslation: { [key: string]: string } = {
+    pending: "Pendiente",
+    onHold: "En Espera",
+    inProgress: "En Progreso",
+    underReview: "En Revisión",
+    completed: "Completado",
+  };
 
-  const handleForm = (data: ProjectFormData) => mutate({ projectId, data });
+  const statusColors: { [key: string]: string } = {
+    pending: "border-t-slate-500",
+    onHold: "border-t-red-500",
+    inProgress: "border-t-blue-500",
+    underReview: "border-t-yellow-500",
+    completed: "border-t-green-500",
+  };
+
   return (
     <>
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-5xl font-black">Actualizar Proyecto</h1>
+      <div className="max-w-screen-2xl mx-auto">
+        <h1 className="text-5xl font-black">{data?.projectName}</h1>
         <p className="text-2xl font-light text-gray-500 mt-5">
-          Llena el siguiente formulario para actualizar el Proyecto
+          {data?.description}
         </p>
 
         <nav className="my-5">
@@ -86,7 +90,39 @@ export const ProjectDetailView = () => {
           <AddTaskModal />
         </nav>
 
-        {isLoading ? "Cargando..." : <p></p>}
+        {isLoadingTasks ? (
+          "Cargando..."
+        ) : (
+          <>
+            <h2 className="text-5xl font-black my-10">Tareas</h2>
+
+            <div className="flex gap-5 overflow-x-scroll 2xl:overflow-auto pb-32">
+              {Object.entries(groupedTasks).map(([status, tasks]) => (
+                <div
+                  key={status}
+                  className="min-w-[300px] 2xl:min-w-0 2xl:w-1/5"
+                >
+                  <h3
+                    className={`capitalize text-xl font-light border border-x-slate-300 bg-white p-3 border-t-8 ${statusColors[status]}`}
+                  >
+                    {statusTranslation[status]}
+                  </h3>
+                  <ul className="mt-5 space-y-5">
+                    {tasks.length === 0 ? (
+                      <li className="text-gray-500 text-center pt-3">
+                        No Hay tareas
+                      </li>
+                    ) : (
+                      tasks.map((task) => (
+                        <TaskCard key={task._id} task={task} />
+                      ))
+                    )}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
       </div>
     </>
   );

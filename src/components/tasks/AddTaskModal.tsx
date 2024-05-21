@@ -7,6 +7,7 @@ import {
   TransitionChild,
 } from "@headlessui/react";
 import { useLocation, useNavigate } from "react-router-dom";
+import TaskForm from "./TaskForm";
 
 export default function AddTaskModal() {
   const location = useLocation();
@@ -47,7 +48,7 @@ export default function AddTaskModal() {
                 leaveTo="opacity-0 scale-95"
               >
                 <DialogPanel className="w-full max-w-4xl transform overflow-hidden rounded-2xl bg-white text-left align-middle shadow-xl transition-all p-16">
-                  <DialogTitle as="h3" className="font-black text-4xl  my-5">
+                  <DialogTitle as="h3" className="font-black text-3xl mb-5">
                     Nueva Tarea
                   </DialogTitle>
 
@@ -55,6 +56,7 @@ export default function AddTaskModal() {
                     Llena el formulario y crea {""}
                     <span className="text-fuchsia-600">una tarea</span>
                   </p>
+                  <TaskForm />
                 </DialogPanel>
               </TransitionChild>
             </div>

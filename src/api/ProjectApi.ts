@@ -1,4 +1,10 @@
-import { ProjectFormData, ProjectSchema, ProjectsSchema } from "@/types/index";
+import {
+  ProjectFormData,
+  ProjectSchema,
+  ProjectsSchema,
+  TaskFormData,
+  TasksSchema,
+} from "@/types/index";
 import api from "@/lib/axios";
 import { isAxiosError } from "axios";
 
@@ -64,6 +70,42 @@ export async function deleteProject(_id: string) {
   try {
     const { data } = await api.delete(`/projects/delete/${_id}`);
     return data;
+  } catch (error) {
+    if (isAxiosError(error)) {
+      throw new Error(error.request.response);
+    }
+  }
+}
+
+/* Tasks */
+
+type TaskTypeProps = {
+  data: TaskFormData;
+  projectId: string;
+};
+
+export async function createTask({ data, projectId }: TaskTypeProps) {
+  try {
+    const { data: response } = await api.post(
+      `/projects/${projectId}/tasks`,
+      data
+    );
+    console.log(response)
+    return response;
+  } catch (error) {
+    if (isAxiosError(error)) {
+      throw new Error(error.request.response);
+    }
+  }
+}
+
+export async function getTasks(projectId : string) {
+  try {
+    const { data } = await api(`/projects/${projectId}/tasks`);
+    const verify = TasksSchema.safeParse(data);
+    if (verify.success) {
+      return verify.data;
+    }
   } catch (error) {
     if (isAxiosError(error)) {
       throw new Error(error.request.response);
