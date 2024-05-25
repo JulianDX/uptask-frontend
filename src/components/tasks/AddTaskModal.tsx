@@ -8,17 +8,23 @@ import {
 } from "@headlessui/react";
 import { useLocation, useNavigate } from "react-router-dom";
 import TaskForm from "./TaskForm";
+import EditTaskForm from "./EditTaskForm";
 
 export default function AddTaskModal() {
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const taskModal = params.get("createTask");
+  const taskModal2 = params.get("editTask");
 
   const navigate = useNavigate();
 
   return (
     <>
-      <Transition appear show={taskModal ? true : false} as={Fragment}>
+      <Transition
+        appear
+        show={taskModal || taskModal2 ? true : false}
+        as={Fragment}
+      >
         <Dialog
           as="div"
           className="relative z-10"
@@ -49,14 +55,17 @@ export default function AddTaskModal() {
               >
                 <DialogPanel className="w-full max-w-4xl transform overflow-hidden rounded-2xl bg-white text-left align-middle shadow-xl transition-all p-16">
                   <DialogTitle as="h3" className="font-black text-3xl mb-5">
-                    Nueva Tarea
+                    {taskModal2 ? "Editar Tarea" : "Nueva Tarea"}
                   </DialogTitle>
 
                   <p className="text-xl font-bold">
-                    Llena el formulario y crea {""}
+                    {!taskModal2
+                      ? "Llena el formulario y crea"
+                      : "Realiza cambios y edita"}{" "}
+                    {""}
                     <span className="text-fuchsia-600">una tarea</span>
                   </p>
-                  <TaskForm />
+                  {taskModal2 ? <EditTaskForm /> : <TaskForm />}
                 </DialogPanel>
               </TransitionChild>
             </div>

@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { ErrorMessage } from "../ErrorMessage";
 import { toast } from "react-toastify";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { createTask } from "@/api/ProjectApi";
 import { TaskFormData } from "@/types/index";
@@ -13,6 +13,8 @@ export default function TaskForm() {
   const projectId = params.projectId!;
 
   const location = useLocation();
+
+  const queryClient = useQueryClient();
 
   const {
     register,
@@ -33,10 +35,11 @@ export default function TaskForm() {
       });
     },
     onSuccess: (res) => {
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
       toast.success(res.msg, {
         theme: "colored",
       });
-      navigate(`${location.pathname}`);
+      navigate(location.pathname, { replace: true });
     },
   });
 

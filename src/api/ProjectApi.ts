@@ -3,6 +3,7 @@ import {
   ProjectSchema,
   ProjectsSchema,
   TaskFormData,
+  TaskSchema,
   TasksSchema,
 } from "@/types/index";
 import api from "@/lib/axios";
@@ -82,15 +83,18 @@ export async function deleteProject(_id: string) {
 type TaskTypeProps = {
   data: TaskFormData;
   projectId: string;
+  taskId: string;
 };
 
-export async function createTask({ data, projectId }: TaskTypeProps) {
+export async function createTask({
+  data,
+  projectId,
+}: Pick<TaskTypeProps, "data" | "projectId">) {
   try {
     const { data: response } = await api.post(
       `/projects/${projectId}/tasks`,
       data
     );
-    console.log(response)
     return response;
   } catch (error) {
     if (isAxiosError(error)) {
@@ -99,10 +103,54 @@ export async function createTask({ data, projectId }: TaskTypeProps) {
   }
 }
 
-export async function getTasks(projectId : string) {
+export async function editTask({ data, projectId, taskId }: TaskTypeProps) {
+  try {
+    const { data: result } = await api.put(
+      `/projects/${projectId}/tasks/${taskId}`,
+      data
+    );
+    return result;
+  } catch (error) {
+    if (isAxiosError(error)) {
+      throw new Error(error.request.response);
+    }
+  }
+}
+
+export async function deleteTask({
+  projectId,
+  taskId,
+}: Pick<TaskTypeProps, "projectId" | "taskId">) {
+  try {
+    const { data: result } = await api.delete(
+      `/projects/${projectId}/tasks/${taskId}`
+    );
+    return result;
+  } catch (error) {
+    if (isAxiosError(error)) {
+      throw new Error(error.request.response);
+    }
+  }
+}
+
+export async function getTasks(projectId: string) {
   try {
     const { data } = await api(`/projects/${projectId}/tasks`);
     const verify = TasksSchema.safeParse(data);
+    if (verify.success) {
+      return verify.data;
+    }
+  } catch (error) {
+    if (isAxiosError(error)) {
+      throw new Error(error.request.response);
+    }
+  }
+}
+
+export async function getTaskById(projectId: string, taskId: string) {
+  try {
+    const { data } = await api(`/projects/${projectId}/tasks/${taskId}`);
+    const verify = TaskSchema.safeParse(data[0]);
     if (verify.success) {
       return verify.data;
     }
