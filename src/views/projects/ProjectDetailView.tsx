@@ -6,6 +6,7 @@ import AddTaskModal from "@/components/tasks/AddTaskModal";
 import { TaskType } from "@/types/index";
 import { useEffect, useState } from "react";
 import { TaskCard } from "@/components/tasks/TaskCard";
+import TaskDetail from "@/components/tasks/TaskDetail";
 
 export const ProjectDetailView = () => {
   const navigate = useNavigate();
@@ -13,6 +14,9 @@ export const ProjectDetailView = () => {
 
   const params = useParams();
   const projectId = params.projectId!;
+
+  const paramsURL = new URLSearchParams(location.search);
+  const taskModal3 = paramsURL.get("taskDetail")!;
 
   const { data, isError } = useQuery({
     queryKey: ["projectById", projectId],
@@ -124,6 +128,7 @@ export const ProjectDetailView = () => {
           </>
         )}
       </div>
+      {taskModal3 && <TaskDetail />}
     </>
   );
 };

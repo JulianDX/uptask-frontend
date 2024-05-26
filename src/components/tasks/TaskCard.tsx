@@ -12,7 +12,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Fragment } from "react/jsx-runtime";
-import TaskDetail from "./TaskDetail";
 
 type taskCardProps = {
   task: TaskType;
@@ -101,7 +100,6 @@ export const TaskCard = ({ task }: taskCardProps) => {
             </MenuItems>
           </Transition>
         </Menu>
-        <TaskDetail />
       </div>
     </li>
   );
