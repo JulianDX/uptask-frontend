@@ -12,6 +12,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Fragment } from "react/jsx-runtime";
+import TaskDetail from "./TaskDetail";
 
 type taskCardProps = {
   task: TaskType;
@@ -70,12 +71,13 @@ export const TaskCard = ({ task }: taskCardProps) => {
           >
             <MenuItems className="absolute right-0 z-10 mt-2 w-48 rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
               <MenuItem>
-                <button
+                <Link
+                  to={`${location.pathname}?taskDetail=${task._id}`}
                   type="button"
                   className="block px-3 py-1 text-sm leading-6 text-gray-900"
                 >
                   Ver Tarea
-                </button>
+                </Link>
               </MenuItem>
               <MenuItem>
                 <Link
@@ -99,6 +101,7 @@ export const TaskCard = ({ task }: taskCardProps) => {
             </MenuItems>
           </Transition>
         </Menu>
+        <TaskDetail />
       </div>
     </li>
   );

@@ -23,6 +23,8 @@ export const TaskSchema = z.object({
   _id: z.string(),
   taskName: z.string(),
   description: z.string(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
   taskStatus: z.enum(['pending', 'onHold', 'inProgress', 'underReview', 'completed'])
 });
 

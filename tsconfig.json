@@ -28,6 +28,9 @@
       ],
       "@/lib/*": [
         "lib/*"
+      ],
+      "@/utils/*": [
+        "utils/*"
       ]
     },
     /* Bundler mode */
