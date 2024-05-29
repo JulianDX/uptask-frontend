@@ -47,11 +47,11 @@ export const TaskCard = ({ task }: taskCardProps) => {
       <div className="min-w-0 flex flex-col gap-y-4">
         <button
           type="button"
-          className="text-xl font-bold text-slate-600 text-left"
+          className="text-xl font-bold text-slate-700 text-left"
         >
-          {task.taskName}
+          {task.taskName.slice(0,22)+"..."}
         </button>
-        <p className="text-slate-500">{task.description}</p>
+        <p className="text-slate-500">{task.description.slice(0,43)+"..."}</p>
       </div>
       <div className="flex shrink-0  gap-x-6">
         <Menu as="div" className="relative flex-none">

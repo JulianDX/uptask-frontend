@@ -41,8 +41,8 @@ export const DashboardView = () => {
 
   return (
     <>
-      <h1 className="text-5xl font-black">Mis Proyectos</h1>
-      <p className="text-2xl font-light text-gray-500 mt-5">
+      <h1 className="text-4xl font-black text-neutral-800">Mis Proyectos</h1>
+      <p className="text-2xl text-gray-600 mt-3 mb-10">
         Maneja y administra tus proyectos
       </p>
       <nav className="my-5">
@@ -69,19 +69,22 @@ export const DashboardView = () => {
                 <div className="min-w-0 flex-auto space-y-2">
                   <Link
                     to={`/projects/detail/${project._id}`}
-                    className="text-gray-600 cursor-pointer hover:underline text-3xl font-bold"
+                    className="text-neutral-800 cursor-pointer hover:underline text-3xl font-bold"
                   >
                     {project.projectName}
                   </Link>
-                  <p className="text-sm text-gray-500">
-                    Cliente: {project.clientName}
+                  <p className="text-md font-bold text-purple-700">
+                    Cliente:{" "}
+                    <span className="font-normal text-gray-600">
+                      {project.clientName}
+                    </span>
                   </p>
-                  <p className="text-sm text-gray-500">{project.description}</p>
+                  <p className="text-md text-gray-600">{project.description}</p>
                 </div>
               </div>
               <div className="flex shrink-0 items-center gap-x-6">
                 <Menu as="div" className="relative flex-none">
-                  <MenuButton className="-m-2.5 block p-2.5 text-gray-500 hover:text-gray-900">
+                  <MenuButton className="-m-2.5 block p-2.5 text-gray-600 hover:text-gray-900">
                     <span className="sr-only">opciones</span>
                     <EllipsisVerticalIcon
                       className="h-9 w-9"

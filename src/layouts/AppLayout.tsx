@@ -6,8 +6,8 @@ import { ToastContainer } from "react-toastify";
 export const AppLayout = () => {
   return (
     <>
-      <header className="bg-gray-800 py-4">
-        <div className="mx-auto max-w-screen-2xl flex flex-col lg:flex-row justify-between items-center">
+      <header className="bg-gray-800 py-6 md:py-2">
+        <div className="mx-auto max-w-screen-xl flex flex-col lg:flex-row justify-between items-center">
           <div className="w-64">
             <Link to={"/"}>
               <Logo />
@@ -18,7 +18,7 @@ export const AppLayout = () => {
           </div>
         </div>
       </header>
-      <section className="mx-auto max-w-screen-xl mt-10 p-5">
+      <section className="mx-auto max-w-screen-xl mt-6 p-5">
         <Outlet />
       </section>
       <footer className="py-5">

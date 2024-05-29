@@ -79,51 +79,59 @@ export const ProjectDetailView = () => {
   return (
     <>
       <div className="max-w-screen-2xl mx-auto">
-        <h1 className="text-5xl font-black">{data?.projectName}</h1>
-        <p className="text-2xl font-light text-gray-500 mt-5">
-          {data?.description}
-        </p>
+        <div className="bg-white p-4 md:p-7 rounded-xl border-gray-100 shadow-lg">
+          <h1 className="text-4xl font-black text-neutral-800">
+            {data?.projectName}
+          </h1>
+          <p className="text-xl text-gray-600 mt-5 mb-10">
+            {data?.description}
+          </p>
 
-        <nav className="my-5">
-          <Link
-            to={`${location.pathname}?createTask=true`}
-            className="bg-purple-400 hover:bg-purple-500 px-10 py-3 text-white text-xl font-bold cursor-pointer transition-colors"
-          >
-            Agregar Tarea
-          </Link>
-          <AddTaskModal />
-        </nav>
+          <nav className="my-5">
+            <Link
+              to={`${location.pathname}?createTask=true`}
+              className="bg-purple-400 hover:bg-purple-500 px-10 py-3 text-white text-xl font-bold cursor-pointer transition-colors"
+            >
+              Agregar Tarea
+            </Link>
+            <AddTaskModal />
+          </nav>
+        </div>
 
         {isLoadingTasks ? (
           "Cargando..."
         ) : (
           <>
-            <h2 className="text-5xl font-black my-10">Tareas</h2>
+            <div className="p-5 pt-0">
+              <h2 className="text-4xl font-black my-10 text-neutral-800">
+                Tareas
+              </h2>
 
-            <div className="flex gap-5 overflow-x-scroll 2xl:overflow-auto pb-32">
-              {Object.entries(groupedTasks).map(([status, tasks]) => (
-                <div
-                  key={status}
-                  className="min-w-[300px] 2xl:min-w-0 2xl:w-1/5"
-                >
-                  <h3
-                    className={`capitalize text-xl font-light border border-x-slate-300 bg-white p-3 border-t-8 ${statusColors[status]}`}
+              <div className="flex gap-5 overflow-x-scroll 2xl:overflow-auto pb-32">
+                {Object.entries(groupedTasks).map(([status, tasks]) => (
+                  <div
+                    key={status}
+                    className="min-w-[300px] 2xl:min-w-0 2xl:w-1/5"
                   >
-                    {statusTranslation[status]}
-                  </h3>
-                  <ul className="mt-5 space-y-5">
-                    {tasks.length === 0 ? (
-                      <li className="text-gray-500 text-center pt-3">
-                        No Hay tareas
-                      </li>
-                    ) : (
-                      tasks.map((task) => (
-                        <TaskCard key={task._id} task={task} />
-                      ))
-                    )}
-                  </ul>
-                </div>
-              ))}
+                    <h3
+                      className={`capitalize text-xl font-light border border-x-slate-300 bg-white p-3 border-t-8 ${statusColors[status]}`}
+                    >
+                      {statusTranslation[status]}
+                    </h3>
+                    <ul className="mt-5 space-y-5">
+                      {tasks.length === 0 ? (
+                        <li className="text-gray-500 text-center pt-3">
+                          No Hay tareas
+                        </li>
+                      ) : (
+                        tasks.map((task) => (
+                          <TaskCard key={task._id} task={task} />
+                        ))
+                      )}
+                    </ul>
+                  </div>
+                ))}
+              </div>
             </div>
           </>
         )}
