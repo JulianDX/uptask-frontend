@@ -84,6 +84,7 @@ type TaskTypeProps = {
   data: TaskFormData;
   projectId: string;
   taskId: string;
+  taskStatus: string;
 };
 
 export async function createTask({
@@ -103,7 +104,11 @@ export async function createTask({
   }
 }
 
-export async function editTask({ data, projectId, taskId }: TaskTypeProps) {
+export async function editTask({
+  data,
+  projectId,
+  taskId,
+}: Pick<TaskTypeProps, "data" | "projectId" | "taskId">) {
   try {
     const { data: result } = await api.put(
       `/projects/${projectId}/tasks/${taskId}`,
@@ -154,6 +159,24 @@ export async function getTaskById(projectId: string, taskId: string) {
     if (verify.success) {
       return verify.data;
     }
+  } catch (error) {
+    if (isAxiosError(error)) {
+      throw new Error(error.request.response);
+    }
+  }
+}
+
+export async function editTaskStatus({
+  projectId,
+  taskId,
+  taskStatus,
+}: Pick<TaskTypeProps, "projectId" | "taskId" | "taskStatus">) {
+  try {
+    const { data } = await api.put(
+      `/projects/${projectId}/tasks/${taskId}/status`,
+      {taskStatus}
+    );
+    return data;
   } catch (error) {
     if (isAxiosError(error)) {
       throw new Error(error.request.response);

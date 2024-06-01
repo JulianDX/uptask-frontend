@@ -1,7 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { getTaskById } from "@/api/ProjectApi";
-import { Fragment, useEffect } from "react";
+import { editTaskStatus, getTaskById } from "@/api/ProjectApi";
+import { ChangeEvent, Fragment, useEffect } from "react";
+import { useMutation } from "@tanstack/react-query";
 import {
   Dialog,
   DialogPanel,
@@ -10,6 +11,7 @@ import {
   TransitionChild,
 } from "@headlessui/react";
 import { formatMongoDate } from "@/utils/index";
+import { toast } from "react-toastify";
 
 export default function TaskDetail() {
   const navigate = useNavigate();
@@ -23,6 +25,24 @@ export default function TaskDetail() {
   const taskId = paramsURL.get("taskDetail")!;
 
   const visible = taskId ? true : false;
+  const queryClient = useQueryClient();
+
+  const { mutate } = useMutation({
+    mutationFn: editTaskStatus,
+    onError: (res) => {
+      toast.error(res.message, {
+        theme: "colored",
+      });
+    },
+    onSuccess: (res) => {
+      queryClient.invalidateQueries({ queryKey: ["task", taskId] });
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
+      toast.success(res.msg, {
+        theme: "colored",
+      });
+      navigate(location.pathname, { replace: true });
+    },
+  });
 
   const { data, isLoading, isError } = useQuery({
     queryFn: () => getTaskById(projectId, taskId),
@@ -42,6 +62,15 @@ export default function TaskDetail() {
     completed: "Completado",
   };
 
+  const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    const object = {
+      projectId,
+      taskId,
+      taskStatus: e.target.value,
+    };
+    mutate(object);
+  };
+
   return (
     <>
       {isLoading ? (
@@ -49,7 +78,11 @@ export default function TaskDetail() {
       ) : (
         <>
           <Transition appear show={visible} as={Fragment}>
-            <Dialog as="div" className="relative z-10" onClose={() => navigate(`${location.pathname}`)}>
+            <Dialog
+              as="div"
+              className="relative z-10"
+              onClose={() => navigate(`${location.pathname}`)}
+            >
               <TransitionChild
                 as={Fragment}
                 enter="ease-out duration-300"
@@ -74,9 +107,17 @@ export default function TaskDetail() {
                     leaveTo="opacity-0 scale-95"
                   >
                     <DialogPanel className="w-full max-w-4xl transform overflow-hidden rounded-2xl bg-white text-left align-middle shadow-xl transition-all p-16">
-                      <p className="text-sm text-slate-400">Agregada el:{" "}{formatMongoDate(data?.createdAt!)}</p>
-                      <p className="text-sm text-slate-400">
-                        Última actualización:{" "}{data?.updatedAt}
+                      <p className="text-sm text-slate-700 font-semibold">
+                        Agregada el:{" "}
+                        <span className="font-normal">
+                          {formatMongoDate(data?.createdAt!)}
+                        </span>
+                      </p>
+                      <p className="text-sm text-slate-700 font-semibold">
+                        Última actualización:{" "}
+                        <span className="font-normal">
+                          {formatMongoDate(data?.updatedAt!)}
+                        </span>
                       </p>
                       <DialogTitle
                         as="h3"
@@ -84,11 +125,34 @@ export default function TaskDetail() {
                       >
                         {data?.taskName}
                       </DialogTitle>
-                      <p className="text-lg text-slate-500 mb-2">
+                      <p className="text-lg text-slate-700 mb-2">
                         {data?.description}
                       </p>
                       <div className="my-5 space-y-3">
-                        <label className="font-bold">Estado Actual: {statusTranslation[`${data?.taskStatus}`]}</label>
+                        <label className="font-bold">
+                          Estado Actual:{" "}
+                          <span className="font-semibold">
+                            {statusTranslation[`${data?.taskStatus}`]}
+                          </span>
+                        </label>
+                      </div>
+                      <div className="my-5 space-y-3 flex flex-col">
+                        <label htmlFor="state" className="font-bold">
+                          Modificar Estado:
+                        </label>
+                        <select
+                          name="state"
+                          id="state"
+                          className="border border-solid border-slate-400 rounded-xl p-2"
+                          defaultValue={data?.taskStatus}
+                          onChange={(e) => handleChange(e)}
+                        >
+                          {Object.entries(statusTranslation).map((object) => (
+                            <option key={object[0]} value={object[0]}>
+                              {object[1]}
+                            </option>
+                          ))}
+                        </select>
                       </div>
                     </DialogPanel>
                   </TransitionChild>

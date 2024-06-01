@@ -114,7 +114,7 @@ export const ProjectDetailView = () => {
                     className="min-w-[300px] 2xl:min-w-0 2xl:w-1/5"
                   >
                     <h3
-                      className={`capitalize text-xl font-light border border-x-slate-300 bg-white p-3 border-t-8 ${statusColors[status]}`}
+                      className={`capitalize text-neutral-800 font-semibold text-xl border border-x-slate-300 bg-white p-3 border-t-8 ${statusColors[status]}`}
                     >
                       {statusTranslation[status]}
                     </h3>
